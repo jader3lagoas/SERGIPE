@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Certificado</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    #canvas {
+      border: 1px solid #ccc;
+      cursor: move;
+      margin-top: 20px;
+      touch-action: none;
+      width: 100%;
+      height: auto;
+      max-width: 800px;
+    }
+
+    input,
+    button {
+      padding: 8px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Gerador de Certificado</h1>
+
+  <input
+    type="text"
+    id="indicativo"
+    placeholder="Digite seu indicativo"
+  >
+
+  <br><br>
+
+  <label for="fontSize">Tamanho da fonte:</label>
+
+  <input
+    type="number"
+    id="fontSize"
+    value="64"
+  >
+
+  <br>
+
+  <label for="fontColor">Cor do texto:</label>
+
+  <input
+    type="color"
+    id="fontColor"
+    value="#000000"
+  >
+
+  <br><br>
+
+  <canvas
+    id="canvas"
+    width="800"
+    height="600">
+  </canvas>
+
+  <br>
+
+  <button onclick="downloadCertificado()">
+    Baixar Certificado
+  </button>
+
+
+  <script>
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const img = new Image();
+
+    /*
+      MANTIDO IGUAL AO CÓDIGO QUE JÁ FUNCIONAVA
+    */
+    img.src = 'certificado.jpg';
+
+
+    let textX = canvas.width / 2;
+    let textY = canvas.height / 2;
+
+    let dragging = false;
+
+    let startX;
+    let startY;
+
+
+    /*
+      Quando a imagem carregar,
+      desenha o certificado.
+    */
+
+    img.onload = () => {
+      drawCanvas();
+    };
+
+
+    function drawCanvas() {
+
+      /*
+        Limpa o canvas
+      */
+
+      ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+
+      /*
+        DESENHA A IMAGEM DO CERTIFICADO
+      */
+
+      ctx.drawImage(
+        img,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+
+      /*
+        CONFIGURAÇÕES DO INDICATIVO
+      */
+
+      const fontSize =
+        parseInt(
+          document.getElementById('fontSize').value
+        );
+
+
+      const fontColor =
+        document.getElementById('fontColor').value;
+
+
+      const indicativo =
+        document.getElementById('indicativo').value.toUpperCase();
+
+
+      /*
+        ESCREVE O INDICATIVO
+      */
+
+      ctx.font =
+        `bold ${fontSize}px Arial`;
+
+      ctx.fillStyle =
+        fontColor;
+
+      ctx.textAlign =
+        'center';
+
+      ctx.fillText(
+        indicativo,
+        textX,
+        textY
+      );
+
+
+      /*
+        ==========================
+        DATA AUTOMÁTICA
+        ==========================
+      */
+
+      const hoje = new Date();
+
+      const dia =
+        String(hoje.getDate()).padStart(2, '0');
+
+      const mes =
+        String(hoje.getMonth() + 1).padStart(2, '0');
+
+      const ano =
+        hoje.getFullYear();
+
+
+      const data =
+        `${dia}/${mes}/${ano}`;
+
+
+      /*
+        A DATA FICA PEQUENA
+        */
+
+      ctx.font =
+        '12px Arial';
+
+
+      /*
+        A DATA USA A MESMA COR
+        DO INDICATIVO
+      */
+
+      ctx.fillStyle =
+        fontColor;
+
+
+      /*
+        DATA NO CANTO INFERIOR DIREITO
+        */
+
+      ctx.textAlign =
+        'right';
+
+      ctx.fillText(
+        'Emitido em: ' + data,
+        canvas.width - 15,
+        canvas.height - 15
+      );
+
+    }
+
+
+    /*
+      ATUALIZA O CERTIFICADO
+      QUANDO DIGITAR O INDICATIVO
+    */
+
+    document
+      .getElementById('indicativo')
+      .addEventListener(
+        'input',
+        drawCanvas
+      );
+
+
+    /*
+      ATUALIZA O TAMANHO DA FONTE
+    */
+
+    document
+      .getElementById('fontSize')
+      .addEventListener(
+        'input',
+        drawCanvas
+      );
+
+
+    /*
+      ATUALIZA A COR
+    */
+
+    document
+      .getElementById('fontColor')
+      .addEventListener(
+        'input',
+        drawCanvas
+      );
+
+
+    /*
+      ==========================
+      MOUSE
+      ==========================
+    */
+
+    canvas.addEventListener(
+      'mousedown',
+      startDrag
+    );
+
+    canvas.addEventListener(
+      'mousemove',
+      drag
+    );
+
+    canvas.addEventListener(
+      'mouseup',
+      stopDrag
+    );
+
+
+    /*
+      ==========================
+      CELULAR / TOUCH
+      ==========================
+    */
+
+    canvas.addEventListener(
+      'touchstart',
+      startDrag
+    );
+
+    canvas.addEventListener(
+      'touchmove',
+      drag
+    );
+
+    canvas.addEventListener(
+      'touchend',
+      stopDrag
+    );
+
+
+    /*
+      INICIA O ARRASTAMENTO
+    */
+
+    function startDrag(e) {
+
+      dragging = true;
+
+
+      if (e.touches) {
+
+        startX =
+          e.touches[0].clientX;
+
+        startY =
+          e.touches[0].clientY;
+
+      } else {
+
+        startX =
+          e.clientX;
+
+        startY =
+          e.clientY;
+
+      }
+
+    }
+
+
+    /*
+      MOVE O INDICATIVO
+    */
+
+    function drag(e) {
+
+      if (!dragging) {
+        return;
+      }
+
+
+      let currentX;
+      let currentY;
+
+
+      if (e.touches) {
+
+        currentX =
+          e.touches[0].clientX;
+
+        currentY =
+          e.touches[0].clientY;
+
+      } else {
+
+        currentX =
+          e.clientX;
+
+        currentY =
+          e.clientY;
+
+      }
+
+
+      textX +=
+        currentX - startX;
+
+      textY +=
+        currentY - startY;
+
+
+      startX =
+        currentX;
+
+      startY =
+        currentY;
+
+
+      drawCanvas();
+
+    }
+
+
+    /*
+      PARA O ARRASTAMENTO
+    */
+
+    function stopDrag() {
+
+      dragging = false;
+
+    }
+
+
+    /*
+      ==========================
+      BAIXAR CERTIFICADO
+      ==========================
+    */
+
+    function downloadCertificado() {
+
+      const link =
+        document.createElement('a');
+
+
+      link.href =
+        canvas.toDataURL();
+
+
+      link.download =
+        'certificado.png';
+
+
+      link.click();
+
+    }
+
+  </script>
+
+</body>
+</html>
