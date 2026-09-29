@@ -1,438 +1,980 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerador de Certificado</title>
 
-  <style>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=5.0,
+               user-scalable=yes">
+
+<title>Gerador de Certificados QAPDMR</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 15px;
+    font-family: Arial, sans-serif;
+    background: #eeeeee;
+}
+
+h1 {
+    text-align: center;
+    font-size: 22px;
+    margin: 5px 0 15px 0;
+}
+
+#controles {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto 15px auto;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.campo {
+    margin-bottom: 10px;
+}
+
+.campo label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.campo input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+}
+
+.linha {
+    display: flex;
+    gap: 10px;
+}
+
+.linha .campo {
+    flex: 1;
+}
+
+#cor {
+    height: 45px;
+    padding: 3px;
+}
+
+#botao {
+    width: 100%;
+    padding: 13px;
+    margin-top: 5px;
+    font-size: 17px;
+    font-weight: bold;
+    color: white;
+    background: #1976d2;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+#botao:hover {
+    background: #125da7;
+}
+
+#certificado {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    aspect-ratio: 1000 / 707;
+
+    background-image: url("certificado.jpg");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: white;
+
+    overflow: hidden;
+
+    /* Zoom com dois dedos */
+    touch-action: pinch-zoom;
+}
+
+#identificacao {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    font-weight: bold;
+    white-space: nowrap;
+    line-height: 1;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    cursor: grab;
+
+    /* Zoom com dois dedos */
+    touch-action: pinch-zoom;
+}
+
+#identificacao:active {
+    cursor: grabbing;
+}
+
+#rodape {
+    position: absolute;
+
+    right: 2%;
+    bottom: 2%;
+
+    font-weight: bold;
+    white-space: nowrap;
+    text-align: right;
+    line-height: 1.1;
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+@media (max-width: 600px) {
+
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f5f5f5;
-      padding: 20px;
+        padding: 8px;
     }
 
-    #canvas {
-      border: 1px solid #ccc;
-      cursor: move;
-      margin-top: 20px;
-      touch-action: none;
-      width: 100%;
-      height: auto;
-      max-width: 800px;
+    h1 {
+        font-size: 19px;
     }
 
-    input,
-    button {
-      padding: 8px;
-      font-size: 16px;
-      margin-top: 10px;
+    #controles {
+        padding: 10px;
     }
 
-    button {
-      cursor: pointer;
+    .linha {
+        flex-direction: column;
+        gap: 0;
     }
-  </style>
+
+}
+
+</style>
+
 </head>
 
 <body>
 
-  <h1>Gerador de Certificado</h1>
+<h1>Gerador de Certificados</h1>
 
-  <input
-    type="text"
-    id="indicativo"
-    placeholder="Digite seu indicativo"
-  >
+<div id="controles">
 
-  <br><br>
+    <div class="campo">
+        <label for="nome">Nome:</label>
 
-  <label for="fontSize">Tamanho da fonte:</label>
-
-  <input
-    type="number"
-    id="fontSize"
-    value="64"
-  >
-
-  <br>
-
-  <label for="fontColor">Cor do texto:</label>
-
-  <input
-    type="color"
-    id="fontColor"
-    value="#000000"
-  >
-
-  <br><br>
-
-  <canvas
-    id="canvas"
-    width="800"
-    height="600">
-  </canvas>
-
-  <br>
-
-  <button onclick="downloadCertificado()">
-    Baixar Certificado
-  </button>
+        <input
+            type="text"
+            id="nome"
+            placeholder="Digite o nome"
+        >
+    </div>
 
 
-  <script>
+    <div class="campo">
 
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+        <label for="indicativo">
+            Indicativo:
+        </label>
 
-    const img = new Image();
+        <input
+            type="text"
+            id="indicativo"
+            placeholder="Digite o indicativo"
+        >
+
+    </div>
+
+
+    <div class="linha">
+
+        <div class="campo">
+
+            <label for="cor">
+                Cor:
+            </label>
+
+            <input
+                type="color"
+                id="cor"
+                value="#000000"
+            >
+
+        </div>
+
+
+        <div class="campo">
+
+            <label for="tamanho">
+                Tamanho:
+            </label>
+
+            <input
+                type="number"
+                id="tamanho"
+                value="52"
+                min="10"
+                max="150"
+            >
+
+        </div>
+
+    </div>
+
+
+    <button
+        id="botao"
+        onclick="baixarCertificado()"
+    >
+        BAIXAR CERTIFICADO
+    </button>
+
+</div>
+
+
+<div id="certificado">
+
+    <div id="identificacao"></div>
+
+    <div id="rodape"></div>
+
+</div>
+
+
+<script>
+
+
+/*
+========================================
+ELEMENTOS
+========================================
+*/
+
+const nomeInput =
+    document.getElementById("nome");
+
+const indicativoInput =
+    document.getElementById("indicativo");
+
+const corInput =
+    document.getElementById("cor");
+
+const tamanhoInput =
+    document.getElementById("tamanho");
+
+const identificacao =
+    document.getElementById("identificacao");
+
+const rodape =
+    document.getElementById("rodape");
+
+const certificado =
+    document.getElementById("certificado");
+
+
+/*
+========================================
+POSIÇÃO DO TEXTO
+========================================
+
+O certificado trabalha em uma área
+virtual de 1000 x 707.
+
+Isso permite que a posição seja
+proporcional em qualquer tela.
+*/
+
+let posicaoX = 500;
+let posicaoY = 353.5;
+
+
+/*
+========================================
+DATA ATUAL
+========================================
+*/
+
+function dataAtual() {
+
+    const hoje =
+        new Date();
+
+    const dia =
+        String(
+            hoje.getDate()
+        ).padStart(2, "0");
+
+    const mes =
+        String(
+            hoje.getMonth() + 1
+        ).padStart(2, "0");
+
+    const ano =
+        hoje.getFullYear();
+
+    return (
+        dia +
+        "/" +
+        mes +
+        "/" +
+        ano
+    );
+}
+
+
+/*
+========================================
+ATUALIZAÇÃO DA TELA
+========================================
+*/
+
+function atualizar() {
+
 
     /*
-      MANTIDO IGUAL AO CÓDIGO QUE JÁ FUNCIONAVA
+    Indicativo sempre em maiúsculo
     */
-    img.src = 'certificado.jpg';
+
+    indicativoInput.value =
+        indicativoInput.value.toUpperCase();
 
 
-    let textX = canvas.width / 2;
-    let textY = canvas.height / 2;
+    const nome =
+        nomeInput.value.trim();
 
-    let dragging = false;
+    const indicativo =
+        indicativoInput.value.trim();
 
-    let startX;
-    let startY;
+    const cor =
+        corInput.value;
+
+    const tamanho =
+        Number(
+            tamanhoInput.value
+        ) || 52;
 
 
     /*
-      Quando a imagem carregar,
-      desenha o certificado.
+    Cor
     */
 
-    img.onload = () => {
-      drawCanvas();
-    };
+    identificacao.style.color =
+        cor;
+
+    rodape.style.color =
+        cor;
 
 
-    function drawCanvas() {
+    /*
+    ESCALA PROPORCIONAL
 
-      /*
-        Limpa o canvas
-      */
+    A largura virtual é 1000.
 
-      ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+    O navegador calcula automaticamente
+    a proporção de acordo com o tamanho
+    da tela.
+    */
 
+    const largura =
+        certificado.clientWidth;
 
-      /*
-        DESENHA A IMAGEM DO CERTIFICADO
-      */
-
-      ctx.drawImage(
-        img,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+    const escala =
+        largura / 1000;
 
 
-      /*
-        CONFIGURAÇÕES DO INDICATIVO
-      */
+    /*
+    TAMANHO DO INDICATIVO/NOME PRINCIPAL
+    */
 
-      const fontSize =
-        parseInt(
-          document.getElementById('fontSize').value
+    identificacao.style.fontSize =
+        (
+            tamanho *
+            escala
+        ) + "px";
+
+
+    /*
+    TEXTO PRINCIPAL
+    */
+
+    if (indicativo) {
+
+        identificacao.textContent =
+            indicativo;
+
+    }
+
+    else if (nome) {
+
+        identificacao.textContent =
+            nome;
+
+    }
+
+    else {
+
+        identificacao.textContent =
+            "";
+
+    }
+
+
+    /*
+    RODAPÉ
+    */
+
+    if (
+        nome &&
+        indicativo
+    ) {
+
+
+        /*
+        Quando existem Nome + Indicativo,
+        o nome e a data ficam menores.
+        */
+
+        rodape.textContent =
+            nome +
+            " — Emitido em " +
+            dataAtual();
+
+
+        rodape.style.fontSize =
+            (
+                tamanho *
+                escala *
+                0.17
+            ) + "px";
+
+    }
+
+    else {
+
+
+        /*
+        Somente indicativo ou somente nome.
+
+        Mantém o tamanho original.
+        */
+
+        rodape.textContent =
+            "Emitido em " +
+            dataAtual();
+
+
+        rodape.style.fontSize =
+            (
+                tamanho *
+                escala *
+                0.28
+            ) + "px";
+
+    }
+
+
+    /*
+    Mantém a posição proporcional.
+    */
+
+    posicionarTexto();
+
+}
+
+
+/*
+========================================
+POSICIONAR TEXTO
+========================================
+*/
+
+function posicionarTexto() {
+
+
+    const largura =
+        certificado.clientWidth;
+
+    const altura =
+        certificado.clientHeight;
+
+    const escala =
+        largura / 1000;
+
+
+    identificacao.style.left =
+        (
+            posicaoX *
+            escala
+        ) + "px";
+
+
+    identificacao.style.top =
+        (
+            posicaoY *
+            escala
+        ) + "px";
+
+}
+
+
+/*
+========================================
+ARRASTAR COM DEDO OU MOUSE
+========================================
+*/
+
+let arrastando = false;
+
+let inicioX = 0;
+let inicioY = 0;
+
+let inicioPosicaoX = 0;
+let inicioPosicaoY = 0;
+
+
+identificacao.addEventListener(
+    "pointerdown",
+    function(event) {
+
+
+        arrastando = true;
+
+
+        identificacao.setPointerCapture(
+            event.pointerId
         );
 
 
-      const fontColor =
-        document.getElementById('fontColor').value;
+        inicioX =
+            event.clientX;
+
+        inicioY =
+            event.clientY;
 
 
-      const indicativo =
-        document.getElementById('indicativo').value.toUpperCase();
+        inicioPosicaoX =
+            posicaoX;
+
+        inicioPosicaoY =
+            posicaoY;
+
+    }
+);
 
 
-      /*
-        ESCREVE O INDICATIVO
-      */
-
-      ctx.font =
-        `bold ${fontSize}px Arial`;
-
-      ctx.fillStyle =
-        fontColor;
-
-      ctx.textAlign =
-        'center';
-
-      ctx.fillText(
-        indicativo,
-        textX,
-        textY
-      );
+identificacao.addEventListener(
+    "pointermove",
+    function(event) {
 
 
-      /*
-        ==========================
-        DATA AUTOMÁTICA
-        ==========================
-      */
+        if (!arrastando) {
 
-      const hoje = new Date();
+            return;
 
-      const dia =
-        String(hoje.getDate()).padStart(2, '0');
-
-      const mes =
-        String(hoje.getMonth() + 1).padStart(2, '0');
-
-      const ano =
-        hoje.getFullYear();
+        }
 
 
-      const data =
-        `${dia}/${mes}/${ano}`;
+        const largura =
+            certificado.clientWidth;
+
+        const altura =
+            certificado.clientHeight;
 
 
-      /*
-        A DATA FICA PEQUENA
+        /*
+        Converte o movimento da tela
+        para a área virtual 1000 x 707.
         */
 
-      ctx.font =
-        '12px Arial';
+        const escalaX =
+            1000 / largura;
+
+        const escalaY =
+            707 / altura;
 
 
-      /*
-        A DATA USA A MESMA COR
-        DO INDICATIVO
-      */
-
-      ctx.fillStyle =
-        fontColor;
+        const deslocamentoX =
+            (
+                event.clientX -
+                inicioX
+            ) * escalaX;
 
 
-      /*
-        DATA NO CANTO INFERIOR DIREITO
+        const deslocamentoY =
+            (
+                event.clientY -
+                inicioY
+            ) * escalaY;
+
+
+        posicaoX =
+            inicioPosicaoX +
+            deslocamentoX;
+
+
+        posicaoY =
+            inicioPosicaoY +
+            deslocamentoY;
+
+
+        /*
+        Impede que o texto saia
+        completamente do certificado.
         */
 
-      ctx.textAlign =
-        'right';
-
-      ctx.fillText(
-        'Emitido em: ' + data,
-        canvas.width - 15,
-        canvas.height - 15
-      );
-
-    }
+        posicaoX =
+            Math.max(
+                0,
+                Math.min(
+                    1000,
+                    posicaoX
+                )
+            );
 
 
-    /*
-      ATUALIZA O CERTIFICADO
-      QUANDO DIGITAR O INDICATIVO
-    */
-
-    document
-      .getElementById('indicativo')
-      .addEventListener(
-        'input',
-        drawCanvas
-      );
+        posicaoY =
+            Math.max(
+                0,
+                Math.min(
+                    707,
+                    posicaoY
+                )
+            );
 
 
-    /*
-      ATUALIZA O TAMANHO DA FONTE
-    */
-
-    document
-      .getElementById('fontSize')
-      .addEventListener(
-        'input',
-        drawCanvas
-      );
-
-
-    /*
-      ATUALIZA A COR
-    */
-
-    document
-      .getElementById('fontColor')
-      .addEventListener(
-        'input',
-        drawCanvas
-      );
-
-
-    /*
-      ==========================
-      MOUSE
-      ==========================
-    */
-
-    canvas.addEventListener(
-      'mousedown',
-      startDrag
-    );
-
-    canvas.addEventListener(
-      'mousemove',
-      drag
-    );
-
-    canvas.addEventListener(
-      'mouseup',
-      stopDrag
-    );
-
-
-    /*
-      ==========================
-      CELULAR / TOUCH
-      ==========================
-    */
-
-    canvas.addEventListener(
-      'touchstart',
-      startDrag
-    );
-
-    canvas.addEventListener(
-      'touchmove',
-      drag
-    );
-
-    canvas.addEventListener(
-      'touchend',
-      stopDrag
-    );
-
-
-    /*
-      INICIA O ARRASTAMENTO
-    */
-
-    function startDrag(e) {
-
-      dragging = true;
-
-
-      if (e.touches) {
-
-        startX =
-          e.touches[0].clientX;
-
-        startY =
-          e.touches[0].clientY;
-
-      } else {
-
-        startX =
-          e.clientX;
-
-        startY =
-          e.clientY;
-
-      }
+        posicionarTexto();
 
     }
+);
+
+
+identificacao.addEventListener(
+    "pointerup",
+    function() {
+
+        arrastando = false;
+
+    }
+);
+
+
+identificacao.addEventListener(
+    "pointercancel",
+    function() {
+
+        arrastando = false;
+
+    }
+);
+
+
+/*
+========================================
+ATUALIZAÇÃO AUTOMÁTICA
+========================================
+*/
+
+nomeInput.addEventListener(
+    "input",
+    atualizar
+);
+
+indicativoInput.addEventListener(
+    "input",
+    atualizar
+);
+
+corInput.addEventListener(
+    "input",
+    atualizar
+);
+
+tamanhoInput.addEventListener(
+    "input",
+    atualizar
+);
+
+
+/*
+========================================
+QUANDO A TELA MUDA DE TAMANHO
+========================================
+*/
+
+window.addEventListener(
+    "resize",
+    atualizar
+);
+
+
+/*
+========================================
+BAIXAR CERTIFICADO
+========================================
+*/
+
+function baixarCertificado() {
+
+
+    const nome =
+        nomeInput.value.trim();
+
+
+    const indicativo =
+        indicativoInput.value
+        .trim()
+        .toUpperCase();
+
+
+    const cor =
+        corInput.value;
+
+
+    const tamanho =
+        Number(
+            tamanhoInput.value
+        ) || 52;
 
 
     /*
-      MOVE O INDICATIVO
+    Cria imagem final
+    de 1000 x 707.
     */
 
-    function drag(e) {
-
-      if (!dragging) {
-        return;
-      }
-
-
-      let currentX;
-      let currentY;
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
 
 
-      if (e.touches) {
-
-        currentX =
-          e.touches[0].clientX;
-
-        currentY =
-          e.touches[0].clientY;
-
-      } else {
-
-        currentX =
-          e.clientX;
-
-        currentY =
-          e.clientY;
-
-      }
+    canvas.width = 1000;
+    canvas.height = 707;
 
 
-      textX +=
-        currentX - startX;
-
-      textY +=
-        currentY - startY;
-
-
-      startX =
-        currentX;
-
-      startY =
-        currentY;
+    const ctx =
+        canvas.getContext(
+            "2d"
+        );
 
 
-      drawCanvas();
-
-    }
+    const fundo =
+        new Image();
 
 
     /*
-      PARA O ARRASTAMENTO
+    Carrega o certificado.
     */
 
-    function stopDrag() {
+    fundo.onload =
+        function() {
 
-      dragging = false;
 
-    }
+        /*
+        Fundo
+        */
+
+        ctx.drawImage(
+            fundo,
+            0,
+            0,
+            1000,
+            707
+        );
+
+
+        /*
+        COR
+        */
+
+        ctx.fillStyle =
+            cor;
+
+
+        /*
+        TEXTO PRINCIPAL
+        */
+
+        ctx.font =
+            "bold " +
+            tamanho +
+            "px Arial";
+
+
+        ctx.textAlign =
+            "center";
+
+
+        ctx.textBaseline =
+            "middle";
+
+
+        let textoPrincipal =
+            "";
+
+
+        if (indicativo) {
+
+            textoPrincipal =
+                indicativo;
+
+        }
+
+        else if (nome) {
+
+            textoPrincipal =
+                nome;
+
+        }
+
+
+        /*
+        Desenha o texto principal
+        */
+
+        if (textoPrincipal) {
+
+            ctx.fillText(
+                textoPrincipal,
+                posicaoX,
+                posicaoY
+            );
+
+        }
+
+
+        /*
+        RODAPÉ
+        */
+
+        ctx.textAlign =
+            "right";
+
+
+        ctx.textBaseline =
+            "bottom";
+
+
+        const textoRodape =
+            nome
+                ? nome +
+                  " — Emitido em " +
+                  dataAtual()
+
+                : "Emitido em " +
+                  dataAtual();
+
+
+        /*
+        Tamanho do rodapé.
+
+        Nome + Indicativo:
+        17% do tamanho principal.
+
+        Outros casos:
+        28%, mantendo o comportamento
+        anterior.
+        */
+
+        const tamanhoRodape =
+            (
+                nome &&
+                indicativo
+            )
+
+                ? Math.max(
+                    12,
+                    tamanho * 0.17
+                  )
+
+                : Math.max(
+                    14,
+                    tamanho * 0.28
+                  );
+
+
+        ctx.font =
+            "bold " +
+            tamanhoRodape +
+            "px Arial";
+
+
+        /*
+        Posição do rodapé.
+        */
+
+        ctx.fillText(
+            textoRodape,
+            980,
+            687
+        );
+
+
+        /*
+        CRIA O DOWNLOAD
+        */
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+
+        link.download =
+            "certificado.png";
+
+
+        link.href =
+            canvas.toDataURL(
+                "image/png"
+            );
+
+
+        link.click();
+
+    };
 
 
     /*
-      ==========================
-      BAIXAR CERTIFICADO
-      ==========================
+    Nome do arquivo de fundo.
     */
 
-    function downloadCertificado() {
+    fundo.src =
+        "certificado.jpg";
 
-      const link =
-        document.createElement('a');
-
-
-      link.href =
-        canvas.toDataURL();
+}
 
 
-      link.download =
-        'certificado.png';
+/*
+========================================
+INICIALIZAÇÃO
+========================================
+*/
 
+atualizar();
 
-      link.click();
-
-    }
-
-  </script>
+</script>
 
 </body>
+
 </html>
